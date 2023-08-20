@@ -19,3 +19,12 @@ class Stem(VMobject):
         D.shift(D.radius*edge)
 
         self.add(L, D)
+
+    def from_function(func, x, ax=None, line_func=Line, color=WHITE, **kwargs):
+        """TODO: Docstring"""
+        y = np.array([func(elem) for elem in x])
+        points = zip(x,y)
+        L = Line(min(x)*RIGHT, max(x)*RIGHT)
+        vg = VGroup(L,*[Stem(p, ax=ax, line_func=line_func, color=color, **kwargs) for p in points])
+        vg += L
+        return vg
