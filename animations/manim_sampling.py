@@ -4,6 +4,7 @@ from stem import Stem
 
 
 class SamplingExample(Scene):
+    """TODO: Docstring"""
     def construct(self):
 
         n = np.arange(-12, 13, 1)
@@ -34,6 +35,7 @@ class SamplingExample(Scene):
 
 
 class AliasExample(Scene):
+    """TODO: Docstring"""
     def construct(self):
 
         n = np.arange(-4,5,1)
@@ -97,6 +99,7 @@ class AliasExample(Scene):
 
 
 class QuantizationExample(Scene):
+    """TODO: Docstring"""
     def construct(self):
 
         n = np.arange(-6, 6, 1)

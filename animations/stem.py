@@ -2,6 +2,7 @@ from manim import *
 
 
 class Stem(VMobject):
+    """TODO: Docstring"""
     def __init__(self, coord=(0,0), ax=None, line_func=Line, color=WHITE, **kwargs):
         super().__init__(**kwargs)
 

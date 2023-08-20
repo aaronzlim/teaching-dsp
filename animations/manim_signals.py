@@ -4,6 +4,7 @@ from stem import Stem
 
 
 class ContinuousTimeSignalExample(Scene):
+    """TODO: Docstring"""
     def construct(self):
         self.camera.background_color = WHITE
         ax = Axes(
@@ -16,6 +17,7 @@ class ContinuousTimeSignalExample(Scene):
 
 
 class DiscreteTimeSignalExample(Scene):
+    """TODO: Docstring"""
     def construct(self):
         self.camera.background_color = WHITE
         ax = Axes(
@@ -30,6 +32,7 @@ class DiscreteTimeSignalExample(Scene):
 
 
 class DiscreteValueSignalExample(Scene):
+    """TODO: Docstring"""
     def construct(self):
         self.camera.background_color = WHITE
 
@@ -67,3 +70,24 @@ class DiscreteValueSignalExample(Scene):
         rect2.move_to(3*UP + 2.5*RIGHT)
         self.play(FadeIn(rect1), FadeIn(rect2), run_time=2)
         self.wait(10)
+
+
+class SineAnimation(Scene):
+    """TODO: Docstring"""
+    def construct(self):
+        # The ValueTracker functions as the constant `a` in `sin(ab)`.
+        freq = ValueTracker(0.1)
+
+        # Create the graph
+        sine_function = lambda x: np.sin(2*np.pi*freq.get_value()*x)
+        sine_graph = always_redraw(lambda: FunctionGraph(
+            sine_function,
+            color=WHITE
+        ))
+        self.play(Create(sine_graph))
+
+        # Animate the sine wave from y=sin(0.1*x) to y=sin(10*x) over the course of 6 seconds.
+        self.play(freq.animate(run_time=6).set_value(0.3))
+        self.play(freq.animate(run_time=6).set_value(0.1))
+
+        self.wait()

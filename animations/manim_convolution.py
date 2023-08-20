@@ -1,6 +1,7 @@
 from manim import *
 
 class Convolution(Scene):
+    """TODO: Docstring"""
     def construct(self):
 
         plane = NumberPlane()
