@@ -216,3 +216,113 @@ class ImpulseResponse(Scene):
         self.wait()
         self.play(ReplacementTransform(txt6, txt7.align_on_border(UP).align_on_border(RIGHT)))
         self.wait(4)
+
+
+class TimeDomainAliasing(Scene):
+    def construct(self):
+
+        N1 = 6
+        N2 = 2
+
+        L1 = Line(0.5*N1*LEFT, 0.5*N1*RIGHT, color=RED)
+        L2 = Line(0.5*N2*LEFT, 0.5*N2*RIGHT, color=BLUE)
+
+        r1 = N1/(2*PI)
+        r2 = (N1+N2)/(2*PI)
+
+        C1 = Circle(radius=r1, color=WHITE)
+        C2 = Circle(radius=r2, color=WHITE)
+
+        A11 = Arc(radius=r1, angle=N1/r1, color=RED)
+        A12 = Arc(radius=r1, angle=N2/r1, color=BLUE).set_stroke(opacity=0.9)
+        A12.rotate(angle=-A12.angle)
+
+        A21 = Arc(radius=r2, angle=N1/r2, color=RED)
+        A22 = Arc(radius=r2, angle=N2/r2, color=BLUE)
+        A22.rotate(angle=-A22.angle)
+
+        txt = Text("With LINEAR convolution we pull one signal through another.")
+        txt.set(font_size=28)
+        txt.align_on_border(LEFT).align_on_border(UP)
+
+        self.wait()
+        self.play(
+            Create(L1.shift(UP)),
+            Create(L2.shift(DOWN)),
+            Write(txt),
+        )
+        self.wait(2)
+        self.play(L1.animate.center())
+        self.play(L2.animate.next_to(L1, LEFT))
+        self.wait(2)
+        self.play(L2.animate.next_to(L1, RIGHT), run_time=5)
+        self.wait(2)
+        self.play(Unwrite(txt))
+        txt = Text("With CIRCULAR convolution, the x-axis changes from a line to a circle.")
+        txt.align_on_border(UP)
+        txt.set(font_size=28)
+        self.play(Write(txt))
+        self.wait()
+        self.play(Create(C1.shift(3*LEFT)), Create(Dot(C1.get_right())))
+        self.play(Write(Text("Start", font_size=20).next_to(C1, RIGHT)))
+        self.wait()
+        self.play(Unwrite(txt))
+        txt = Text("If we make the output buffer the same size as the larger signal")
+        txt.set(font_size=28).align_on_border(UP)
+        txt2 = Text("(i.e. zero pad the smaller signal to the size of the larger one before the DFT.)")
+        txt2.set(font_size=28).next_to(txt, DOWN)
+        self.play(Write(txt), Write(txt2))
+        self.wait()
+        A11.move_to(L1.get_center())
+        A12.move_to(L2.get_center())
+        self.play(
+            ReplacementTransform(L1, A11),
+            ReplacementTransform(L2, A12),
+            run_time=2
+        )
+        self.wait()
+        A11.set_z_index(C1.z_index+1)
+        A12.set_z_index(C1.z_index+2)
+        self.play(
+            A11.animate.move_arc_center_to(C1.get_center()),
+            A12.animate.move_arc_center_to(C1.get_center()),
+        )
+        self.wait(2)
+        self.play(Unwrite(txt), Unwrite(txt2))
+        txt = Text("The equivalent convolution in the time domain has the smaller signal overlap")
+        txt.set(font_size=28).align_on_border(UP)
+        txt2 = Text("the larger one, corrupting the output of the convolution.")
+        txt2.set(font_size=28).next_to(txt, DOWN)
+        self.play(Write(txt), Write(txt2))
+        self.wait(2)
+        self.play(
+            Rotate(A12, angle=(2*PI + A12.angle), about_point=C1.get_center()),
+            run_time=5
+        )
+        self.wait(3)
+        self.play(Unwrite(txt), Unwrite(txt2))
+        txt = Text("If we make the output buffer large enough to fit both signals")
+        txt.set(font_size=28).align_on_border(UP)
+        txt2 = Text("(i.e. zero pad both signals to N+M-1 before the DFT)")
+        txt2.set(font_size=28).next_to(txt, DOWN)
+        self.play(Write(txt), Write(txt2))
+        self.wait(2)
+        self.play(Create(C2.shift(3*RIGHT)))
+        self.wait()
+        self.play(
+            Create(A21.move_arc_center_to(C2.get_center())),
+            Create(A22.move_arc_center_to(C2.get_center())),
+            Create(Dot(C2.get_right())),
+            Write(Text("Start", font_size=20).next_to(C2, RIGHT))
+        )
+        self.wait()
+        self.play(
+            Rotate(A22, angle=2*PI, about_point=C2.get_center()),
+            run_time=5
+        )
+        self.wait()
+        self.play(Unwrite(txt), Unwrite(txt2))
+        txt = Text("There is no overalap, and no corruption of the output.")
+        txt.set(font_size=28).align_on_border(UP)
+        self.play(Write(txt))
+        self.wait(5)
