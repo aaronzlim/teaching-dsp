@@ -98,6 +98,47 @@ class AliasExample(Scene):
         self.wait(5)
 
 
+class AliasFrequencyExample(Scene):
+    def construct(self):
+        nl = NumberLine(length=13)
+        tone = Vector(UP)
+        freq_label = DecimalNumber(0, num_decimal_places=2, include_sign=True, unit=None)
+        tracker = ValueTracker(0)
+        tone.add_updater(
+            lambda m: m.next_to(
+                nl.n2p(tracker.get_value()),
+                UP,
+            )
+        )
+        f = np.roll(np.linspace(-0.5, 0.5, 15), -7)
+        freq_label.add_updater(lambda d: d.next_to(tone, UP).set_value(f[int(tracker.get_value() % 15)]))
+
+        true_freq_label = Text("True Frequency: ", font_size=28).align_on_border(LEFT).align_on_border(UP)
+
+        true_freq = DecimalNumber(-1/15, num_decimal_places=2, include_sign=True, unit=" cyc/Sa")
+        true_freq.next_to(true_freq_label, RIGHT)
+
+        self.add(nl, tone, freq_label, true_freq_label, true_freq)
+        self.add(Text("Normalized Frequency", font_size=28).next_to(nl, DOWN))
+        self.add(Text("-0.5", font_size=24).next_to(nl, DOWN).align_to(nl, LEFT))
+        self.add(Text("+0.5", font_size=24).next_to(nl, DOWN).align_to(nl, RIGHT))
+
+        for _ in range(7):
+            for t in range(8):
+                self.play(
+                    tracker.animate.set_value(t),
+                    true_freq.animate.set_value(true_freq.get_value() + (1/15)),
+                    run_time=0.5
+                )
+            tracker.set_value(-7)
+            for t in range(-7, 0):
+                self.play(
+                    tracker.animate.set_value(t),
+                    true_freq.animate.set_value(true_freq.get_value() + (1/15)),
+                    run_time=0.5
+                )
+
+
 class QuantizationExample(Scene):
     """TODO: Docstring"""
     def construct(self):
